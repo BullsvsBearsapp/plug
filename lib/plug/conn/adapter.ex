@@ -11,6 +11,11 @@ defmodule Plug.Conn.Adapter do
           port: :inet.port_number(),
           ssl_cert: binary | nil
         }
+  @type sock_data :: %{
+          address: :inet.ip_address(),
+          port: :inet.port_number()
+        }
+  @type ssl_data :: :ssl.connection_info() | nil
 
   @doc """
   Function used by adapters to create a new connection.
@@ -49,6 +54,9 @@ defmodule Plug.Conn.Adapter do
   as the body can no longer be manipulated. However, the
   test implementation returns the actual body so it can
   be used during testing.
+
+  Webservers must send a `{:plug_conn, :sent}` message to the
+  process that called `Plug.Conn.Adapter.conn/5`.
   """
   @callback send_resp(
               payload,
@@ -69,6 +77,9 @@ defmodule Plug.Conn.Adapter do
   as the body can no longer be manipulated. However, the
   test implementation returns the actual body so it can
   be used during testing.
+
+  Webservers must send a `{:plug_conn, :sent}` message to the
+  process that called `Plug.Conn.Adapter.conn/5`.
   """
   @callback send_file(
               payload,
@@ -89,6 +100,9 @@ defmodule Plug.Conn.Adapter do
   as the body in order to be consistent with the built-up
   body returned by subsequent calls to the test implementation's
   `chunk/2` function
+
+  Webservers must send a `{:plug_conn, :sent}` message to the
+  process that called `Plug.Conn.Adapter.conn/5`.
   """
   @callback send_chunked(payload, status :: Conn.status(), headers :: Conn.headers()) ::
               {:ok, sent_body :: binary | nil, payload}
@@ -124,6 +138,8 @@ defmodule Plug.Conn.Adapter do
 
   If the adapter does not support server push then `{:error, :not_supported}`
   should be returned.
+
+  This callback no longer needs to be implemented, as browsers no longer support server push.
   """
   @callback push(payload, path :: String.t(), headers :: Keyword.t()) :: :ok | {:error, term}
 
@@ -156,7 +172,20 @@ defmodule Plug.Conn.Adapter do
   @callback get_peer_data(payload) :: peer_data()
 
   @doc """
+  Returns sock (local-side) information such as the address and port.
+  """
+  @callback get_sock_data(payload) :: sock_data()
+
+  @doc """
+  Returns details of the negotiated SSL connection, if present. If the connection is not SSL,
+  returns nil
+  """
+  @callback get_ssl_data(payload) :: ssl_data()
+
+  @doc """
   Returns the HTTP protocol and its version.
   """
   @callback get_http_protocol(payload) :: http_protocol
+
+  @optional_callbacks push: 3, get_sock_data: 1, get_ssl_data: 1
 end

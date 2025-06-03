@@ -330,12 +330,15 @@ defmodule Plug.DebuggerTest do
       |> put_req_header("accept", "text/html")
       |> Plug.Parsers.call(Plug.Parsers.init(parsers: [:urlencoded]))
       |> put_req_header("<script>xss-header</script>", "<script>xss-val</script>")
-      |> render([], fn -> raise "<script>oops</script>" end)
+      |> render([], fn -> raise "<script>xss-error</script>" end)
 
     assert conn.resp_body =~ "x=&lt;script&gt;alert(document.domain)&lt;/script&gt;"
     assert conn.resp_body =~ "&lt;script&gt;xss-header&lt;/script&gt;"
     assert conn.resp_body =~ "&lt;script&gt;xss-val&lt;/script&gt;"
-    assert conn.resp_body =~ "&lt;script&gt;oops&lt;/script&gt;"
+    assert conn.resp_body =~ "&lt;script&gt;xss-error&lt;/script&gt;"
+
+    refute conn.resp_body =~ "<script>alert"
+    refute conn.resp_body =~ "<script>xss"
   end
 
   test "uses PLUG_EDITOR with __FILE__" do
@@ -624,5 +627,32 @@ defmodule Plug.DebuggerTest do
     assert_raise ArgumentError, fn ->
       String.to_existing_atom("not_existing_atom_for_test_does_not_create_new_atom")
     end
+  end
+
+  test "render markdown with text/html;q=0.5" do
+    conn =
+      conn(:get, "/")
+      |> put_req_header("accept", "text/html;q=0.5")
+      |> render([], fn -> raise "oops" end)
+
+    assert get_resp_header(conn, "content-type") == ["text/markdown; charset=utf-8"]
+  end
+
+  test "render markdown with text/*;q=0.5" do
+    conn =
+      conn(:get, "/")
+      |> put_req_header("accept", "text/*;q=0.5")
+      |> render([], fn -> raise "oops" end)
+
+    assert get_resp_header(conn, "content-type") == ["text/markdown; charset=utf-8"]
+  end
+
+  test "render markdown with */*;q=0.5" do
+    conn =
+      conn(:get, "/")
+      |> put_req_header("accept", "*/*;q=0.5")
+      |> render([], fn -> raise "oops" end)
+
+    assert get_resp_header(conn, "content-type") == ["text/markdown; charset=utf-8"]
   end
 end

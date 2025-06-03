@@ -1,5 +1,35 @@
 # Changelog
 
+## v1.18.0 (2025-05-28)
+
+### Enhancements
+
+  * [Plug.Conn] Define optional `get_sock_data/1` and `get_ssl_data/1` callbacks
+  * [Plug.RequestID] Allow metadata key to be customizable
+  * [Plug.Router] Allow match to dispatch to function plugs
+
+## v1.17.0 (2025-03-14)
+
+### Enhancements
+
+  * [Plug.Debugger] Add dark mode and other UI improvements
+  * [Plug.Debugger] Link `Module.function/arity` to hexdocs in exception messages
+  * [Plug.Debugger] Support `__RELATIVEFILE__` to `PLUG_EDITOR` replacements
+  * [Plug.SSL] Add SSL validation support for `certs_keys`
+
+### Deprecations
+
+  * [Plug.Conn.Adapter] Make `push` an optional callback as it is no longer supported by browsers
+  * [Plug.Conn] Deprecate `req_cookies`, `cookies`, and `resp_cookies` fields in favor of functions
+  * [Plug.Conn] Deprecate `owner` field. Tracking responses is now part of adapters
+  * [Plug.Test] Deprecate `use Plug.Test` in favor of imports
+
+## v1.16.2 (2025-03-14)
+
+### Bug fixes
+
+  * Avoid XSS injection in the debug error page
+
 ## v1.16.1 (2024-06-20)
 
 ### Enhancements
@@ -295,7 +325,7 @@ Require Elixir v1.10+.
 ### Enhancements
 
   * [Plug.Conn] Add `get_session/1` for retrieving the whole session
-  * [Plug.CSRFProtection] Add `Plug.CSRFPRotection.load_state/2` and `Plug.CSRFPRotection.dump_state/0` to allow tokens to be generated in other processes
+  * [Plug.CSRFProtection] Add `Plug.CSRFProtection.load_state/2` and `Plug.CSRFProtection.dump_state/0` to allow tokens to be generated in other processes
   * [Plug.Parsers] Allow unnamed parts in multipart parser via `:include_unnamed_parts_at`
   * [Plug.Router] Wrap router dispatch in a connection checkpoint to avoid losing information attached to the connection in error cases
   * [Plug.Telemetry] Add `Plug.Telemetry` to facilitate with telemetry integration
