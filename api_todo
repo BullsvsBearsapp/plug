@@ -1,0 +1,7 @@
+# API Keys
+DEEPSEEK_API_KEY=your_api_key_here
+COINGECKO_API_KEY=free_key_from_coingecko.com
+
+# Wyoming Configuration
+WYOMING_DAO_ADDRESS=your_dao_address
+POWER_LIMIT=9.8
