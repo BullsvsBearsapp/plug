@@ -1,0 +1,13 @@
+WyoVerse/
+├── .env.template             # For API keys and secrets
+├── requirements.txt          # Python dependencies
+├── wyo_assist.py             # Main command center
+├── dee_core/                 # Dee's intelligence system
+│   ├── __init__.py
+│   ├── core.py               # Ethical AI core
+│   ├── temporal.py           # Time operations
+│   └── power_manager.py      # Power constraint system
+└── game_integration/         # Crypto/gaming components
+    ├── __init__.py
+    ├── crypto_clashers.py    # Market-based game
+    └── asset_finder.py       # Value discovery tool
